@@ -1,0 +1,10 @@
+C:\Users\koivuja\git\CommunityHiQ\Frends.Community.MySQL\Frends.Community.MySql\bin\Debug\netstandard2.0\Frends.Community.MySql.deps.json
+C:\Users\koivuja\git\CommunityHiQ\Frends.Community.MySQL\Frends.Community.MySql\bin\Debug\netstandard2.0\Frends.Community.MySql.dll
+C:\Users\koivuja\git\CommunityHiQ\Frends.Community.MySQL\Frends.Community.MySql\bin\Debug\netstandard2.0\Frends.Community.MySql.pdb
+C:\Users\koivuja\git\CommunityHiQ\Frends.Community.MySQL\Frends.Community.MySql\obj\Debug\netstandard2.0\Frends.Community.MySql.csprojAssemblyReference.cache
+C:\Users\koivuja\git\CommunityHiQ\Frends.Community.MySQL\Frends.Community.MySql\obj\Debug\netstandard2.0\Frends.Community.MySql.csproj.CoreCompileInputs.cache
+C:\Users\koivuja\git\CommunityHiQ\Frends.Community.MySQL\Frends.Community.MySql\obj\Debug\netstandard2.0\Frends.Community.MySql.AssemblyInfoInputs.cache
+C:\Users\koivuja\git\CommunityHiQ\Frends.Community.MySQL\Frends.Community.MySql\obj\Debug\netstandard2.0\Frends.Community.MySql.AssemblyInfo.cs
+C:\Users\koivuja\git\CommunityHiQ\Frends.Community.MySQL\Frends.Community.MySql\obj\Debug\netstandard2.0\Frends.Community.MySql.dll
+C:\Users\koivuja\git\CommunityHiQ\Frends.Community.MySQL\Frends.Community.MySql\obj\Debug\netstandard2.0\Frends.Community.MySql.pdb
+C:\Users\koivuja\git\CommunityHiQ\Frends.Community.MySQL\Frends.Community.MySql\bin\Debug\netstandard2.0\Frends.Community.Mysql.xml
