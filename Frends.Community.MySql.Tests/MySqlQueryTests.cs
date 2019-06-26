@@ -74,7 +74,7 @@ namespace Frends.Community.MySql.Tests
         public async Task ShouldReturnXmlString()
         {
             var q = new QueryProperties { Query = @"select * from HodorTest" };
-            var o = new OutputProperties
+            var o = new QueryOutputProperties
             {
                 ReturnType = QueryReturnType.Xml,
                 XmlOutput = new XmlOutputProperties
@@ -85,7 +85,7 @@ namespace Frends.Community.MySql.Tests
             };
             var options = new Options { ThrowErrorOnFailure = true };
 
-            Output result = await QueryTask.Query(q, o, _conn, options, new CancellationToken());
+            Output result = await MySql.Query(q, o, _conn, options, new CancellationToken());
 
             Assert.AreEqual(@"<?xml version=""1.0"" encoding=""utf-16""?>
 <items>
@@ -105,7 +105,7 @@ namespace Frends.Community.MySql.Tests
         public async Task ShouldWriteXmlFile()
         {
             var q = new QueryProperties { Query = @"select name as ""name"", value as ""value"" from HodorTest" };
-            var o = new OutputProperties
+            var o = new QueryOutputProperties
             {
                 ReturnType = QueryReturnType.Xml,
                 XmlOutput = new XmlOutputProperties
@@ -121,7 +121,7 @@ namespace Frends.Community.MySql.Tests
             };
             var options = new Options { ThrowErrorOnFailure = true };
 
-            Output result = await QueryTask.Query(q, o, _conn, options, new CancellationToken());
+            Output result = await MySql.Query(q, o, _conn, options, new CancellationToken());
 
             Assert.IsTrue(File.Exists(result.Result), "should have created xml output file");
             Assert.AreEqual(
@@ -148,14 +148,14 @@ namespace Frends.Community.MySql.Tests
         public async Task QueryDatabaseJSON()
         {
             var queryProperties = new QueryProperties { Query = "SELECT * FROM DecimalTest" };
-            var outputProperties = new OutputProperties
+            var outputProperties = new QueryOutputProperties
             {
                 ReturnType = QueryReturnType.Json,
                 JsonOutput = new JsonOutputProperties()
             };
             var options = new Options { ThrowErrorOnFailure = true };
 
-            Output result = await QueryTask.Query(queryProperties, outputProperties, _conn, options, new CancellationToken());
+            Output result = await MySql.Query(queryProperties, outputProperties, _conn, options, new CancellationToken());
 
             Assert.AreNotEqual("", result.Result);
             Assert.AreEqual(true, result.Success);
@@ -166,7 +166,7 @@ namespace Frends.Community.MySql.Tests
         public async Task ShouldReturnJsonString()
         {
             var q = new QueryProperties { Query = @"select name as ""name"", value as ""value"" from HodorTest" };
-            var o = new OutputProperties
+            var o = new QueryOutputProperties
             {
                 ReturnType = QueryReturnType.Json,
                 JsonOutput = new JsonOutputProperties(),
@@ -174,7 +174,7 @@ namespace Frends.Community.MySql.Tests
             };
             var options = new Options { ThrowErrorOnFailure = true };
 
-            Output result = await QueryTask.Query(q, o, _conn, options, new CancellationToken());
+            Output result = await MySql.Query(q, o, _conn, options, new CancellationToken());
 
             Assert.IsTrue(string.Equals(result.Result, @"[
   {
@@ -193,7 +193,7 @@ namespace Frends.Community.MySql.Tests
         public async Task ShouldWriteJsonFile()
         {
             var q = new QueryProperties { Query = @"select name as ""name"", value as ""value"" from HodorTest" };
-            var o = new OutputProperties
+            var o = new QueryOutputProperties
             {
                 ReturnType = QueryReturnType.Json,
                 JsonOutput = new JsonOutputProperties(),
@@ -205,7 +205,7 @@ namespace Frends.Community.MySql.Tests
             };
             var options = new Options { ThrowErrorOnFailure = true };
 
-            Output result = await QueryTask.Query(q, o, _conn, options, new CancellationToken());
+            Output result = await MySql.Query(q, o, _conn, options, new CancellationToken());
 
             Assert.IsTrue(File.Exists(result.Result), "should have created json outputfile");
             Assert.AreEqual(@"[
@@ -227,7 +227,7 @@ namespace Frends.Community.MySql.Tests
         public async Task ShouldReturnCsvString()
         {
             var q = new QueryProperties { Query = @"select name as ""name"", value as ""value"" from HodorTest" };
-            var o = new OutputProperties
+            var o = new QueryOutputProperties
             {
                 ReturnType = QueryReturnType.Csv,
                 CsvOutput = new CsvOutputProperties
@@ -238,7 +238,7 @@ namespace Frends.Community.MySql.Tests
             };
             var options = new Options { ThrowErrorOnFailure = true };
 
-            Output result = await QueryTask.Query(q, o, _conn, options, new CancellationToken());
+            Output result = await MySql.Query(q, o, _conn, options, new CancellationToken());
 
             StringAssert.IsMatch(result.Result, "name;value\r\nhodor;123\r\njon;321\r\n");
         }
@@ -248,7 +248,7 @@ namespace Frends.Community.MySql.Tests
         public async Task ShouldWriteCsvFile()
         {
             var q = new QueryProperties { Query = "select * from HodorTest" };
-            var o = new OutputProperties
+            var o = new QueryOutputProperties
             {
                 ReturnType = QueryReturnType.Csv,
                 CsvOutput = new CsvOutputProperties
@@ -264,7 +264,7 @@ namespace Frends.Community.MySql.Tests
             };
             var options = new Options { ThrowErrorOnFailure = true };
 
-            Output result = await QueryTask.Query(q, o, _conn, options, new CancellationToken());
+            Output result = await MySql.Query(q, o, _conn, options, new CancellationToken());
 
             Assert.IsTrue(File.Exists(result.Result), "should have created csv output file");
             File.Delete(result.Result);

@@ -1783,7 +1783,7 @@
           "lib/netstandard1.3/System.Xml.XPath.XmlDocument.dll": {}
         }
       },
-      "Frends.Community.MySql/0.0.1": {
+      "Frends.Community.MySql/1.0.3": {
         "type": "project",
         "framework": ".NETStandard,Version=v2.0",
         "dependencies": {
@@ -6244,7 +6244,7 @@
         "system.xml.xpath.xmldocument.nuspec"
       ]
     },
-    "Frends.Community.MySql/0.0.1": {
+    "Frends.Community.MySql/1.0.3": {
       "type": "project",
       "path": "../Frends.Community.MySql/Frends.Community.MySql.csproj",
       "msbuildProject": "../Frends.Community.MySql/Frends.Community.MySql.csproj"
@@ -6252,7 +6252,7 @@
   },
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v2.1": [
-      "Frends.Community.MySql >= 0.0.1",
+      "Frends.Community.MySql >= 1.0.3",
       "Microsoft.NET.Test.Sdk >= 15.8.0",
       "Microsoft.NETCore.App >= 2.1.0",
       "MySql.Data >= 8.0.16",

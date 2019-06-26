@@ -8,7 +8,7 @@
     ".NETCoreApp,Version=v2.1": {
       "Frends.Community.MySql.Tests/1.0.0": {
         "dependencies": {
-          "Frends.Community.MySql": "0.0.1",
+          "Frends.Community.MySql": "1.0.3",
           "Microsoft.NET.Test.Sdk": "15.8.0",
           "MySql.Data": "8.0.16",
           "NUnit3TestAdapter": "3.10.0",
@@ -1132,7 +1132,7 @@
           }
         }
       },
-      "Frends.Community.MySql/0.0.1": {
+      "Frends.Community.MySql/1.0.3": {
         "dependencies": {
           "MySql.Data": "8.0.16",
           "Newtonsoft.Json": "10.0.3",
@@ -1721,7 +1721,7 @@
       "path": "system.xml.xpath.xmldocument/4.3.0",
       "hashPath": "system.xml.xpath.xmldocument.4.3.0.nupkg.sha512"
     },
-    "Frends.Community.MySql/0.0.1": {
+    "Frends.Community.MySql/1.0.3": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

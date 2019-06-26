@@ -4,56 +4,6 @@
         <name>Frends.Community.MySql</name>
     </assembly>
     <members>
-        <member name="T:Frends.Community.MySql.QueryParameterType">
-            <summary>
-            Enumerator representing MySql parameter data types
-            </summary>
-        </member>
-        <member name="P:Frends.Community.MySql.QueryProperties.Parameters">
-            <summary>
-            Parameters for the database query
-            </summary>
-        </member>
-        <member name="P:Frends.Community.MySql.QueryParameter.Name">
-            <summary>
-            The name of the parameter
-            </summary>
-        </member>
-        <member name="P:Frends.Community.MySql.QueryParameter.Value">
-            <summary>
-            The value of the parameter
-            </summary>
-        </member>
-        <member name="P:Frends.Community.MySql.QueryParameter.DataType">
-            <summary>
-            The type of the parameter
-            </summary>
-        </member>
-        <member name="P:Frends.Community.MySql.OutputProperties.XmlOutput">
-            <summary>
-            Xml specific output properties
-            </summary>
-        </member>
-        <member name="P:Frends.Community.MySql.OutputProperties.JsonOutput">
-            <summary>
-            Json specific output properties
-            </summary>
-        </member>
-        <member name="P:Frends.Community.MySql.OutputProperties.CsvOutput">
-            <summary>
-            Csv specific output properties
-            </summary>
-        </member>
-        <member name="P:Frends.Community.MySql.OutputProperties.OutputToFile">
-            <summary>
-            In case user wants to write results to a file instead of returning them to process
-            </summary>
-        </member>
-        <member name="P:Frends.Community.MySql.OutputProperties.OutputFile">
-            <summary>
-            Output file properties
-            </summary>
-        </member>
         <member name="P:Frends.Community.MySql.ConnectionProperties.ConnectionString">
             <summary>
             MySql connection string
@@ -135,7 +85,57 @@
             Output file encoding
             </summary>
         </member>
-        <member name="M:Frends.Community.MySql.Extensions.ToXmlAsync(MySql.Data.MySqlClient.MySqlCommand,Frends.Community.MySql.OutputProperties,System.Threading.CancellationToken)">
+        <member name="T:Frends.Community.MySql.QueryParameterType">
+            <summary>
+            Enumerator representing MySql parameter data types
+            </summary>
+        </member>
+        <member name="P:Frends.Community.MySql.QueryProperties.Parameters">
+            <summary>
+            Parameters for the database query
+            </summary>
+        </member>
+        <member name="P:Frends.Community.MySql.QueryParameter.Name">
+            <summary>
+            The name of the parameter
+            </summary>
+        </member>
+        <member name="P:Frends.Community.MySql.QueryParameter.Value">
+            <summary>
+            The value of the parameter
+            </summary>
+        </member>
+        <member name="P:Frends.Community.MySql.QueryParameter.DataType">
+            <summary>
+            The type of the parameter
+            </summary>
+        </member>
+        <member name="P:Frends.Community.MySql.QueryOutputProperties.XmlOutput">
+            <summary>
+            Xml specific output properties
+            </summary>
+        </member>
+        <member name="P:Frends.Community.MySql.QueryOutputProperties.JsonOutput">
+            <summary>
+            Json specific output properties
+            </summary>
+        </member>
+        <member name="P:Frends.Community.MySql.QueryOutputProperties.CsvOutput">
+            <summary>
+            Csv specific output properties
+            </summary>
+        </member>
+        <member name="P:Frends.Community.MySql.QueryOutputProperties.OutputToFile">
+            <summary>
+            In case user wants to write results to a file instead of returning them to process
+            </summary>
+        </member>
+        <member name="P:Frends.Community.MySql.QueryOutputProperties.OutputFile">
+            <summary>
+            Output file properties
+            </summary>
+        </member>
+        <member name="M:Frends.Community.MySql.Extensions.ToXmlAsync(MySql.Data.MySqlClient.MySqlCommand,Frends.Community.MySql.QueryOutputProperties,System.Threading.CancellationToken)">
             <summary>
             Write query results to csv string or file
             </summary>
@@ -144,7 +144,7 @@
             <param name="cancellationToken"></param>
             <returns></returns>
         </member>
-        <member name="M:Frends.Community.MySql.Extensions.ToJsonAsync(MySql.Data.MySqlClient.MySqlCommand,Frends.Community.MySql.OutputProperties,System.Threading.CancellationToken)">
+        <member name="M:Frends.Community.MySql.Extensions.ToJsonAsync(MySql.Data.MySqlClient.MySqlCommand,Frends.Community.MySql.QueryOutputProperties,System.Threading.CancellationToken)">
             <summary>
             Write query results to json string or file
             </summary>
@@ -153,7 +153,7 @@
             <param name="cancellationToken"></param>
             <returns></returns>
         </member>
-        <member name="M:Frends.Community.MySql.Extensions.ToCsvAsync(MySql.Data.MySqlClient.MySqlCommand,Frends.Community.MySql.OutputProperties,System.Threading.CancellationToken)">
+        <member name="M:Frends.Community.MySql.Extensions.ToCsvAsync(MySql.Data.MySqlClient.MySqlCommand,Frends.Community.MySql.QueryOutputProperties,System.Threading.CancellationToken)">
             <summary>
             Write query results to csv string or file
             </summary>
@@ -162,12 +162,12 @@
             <param name="cancellationToken"></param>
             <returns></returns>
         </member>
-        <member name="T:Frends.Community.MySql.QueryTask">
+        <member name="T:Frends.Community.MySql.MySql">
             <summary>
             Task for performing queries in MySql databases. See documentation at https://github.com/CommunityHiQ/Frends.Community.MySQL
             </summary>
         </member>
-        <member name="M:Frends.Community.MySql.QueryTask.Query(Frends.Community.MySql.QueryProperties,Frends.Community.MySql.OutputProperties,Frends.Community.MySql.ConnectionProperties,Frends.Community.MySql.Options,System.Threading.CancellationToken)">
+        <member name="M:Frends.Community.MySql.MySql.Query(Frends.Community.MySql.QueryProperties,Frends.Community.MySql.QueryOutputProperties,Frends.Community.MySql.ConnectionProperties,Frends.Community.MySql.Options,System.Threading.CancellationToken)">
             <summary>
             Task for performing queries in MySql databases. See documentation at https://github.com/CommunityHiQ/Frends.Community.MySQL
             </summary>
@@ -178,9 +178,9 @@
             <param name="cancellationToken"></param>
             <returns>Object { bool Success, string Message, string Result }</returns>
         </member>
-        <member name="M:Frends.Community.MySql.QueryTask.CreateMySqlParameter(Frends.Community.MySql.QueryParameter)">
+        <member name="M:Frends.Community.MySql.MySql.CreateMySqlQueryParameter(Frends.Community.MySql.QueryParameter)">
             <summary>
-            Gets list of parameters available for MySql.
+            Gets list of parameters available for MySql Query.
             </summary>
         </member>
     </members>

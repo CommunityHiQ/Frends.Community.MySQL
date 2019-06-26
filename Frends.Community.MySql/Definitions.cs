@@ -5,86 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Frends.Community.MySql
 {
-    public enum QueryReturnType { Json, Xml, Csv };
-    
-    /// <summary>
-    /// Enumerator representing MySql parameter data types
-    /// </summary>
-    public enum QueryParameterType
-    {
-        Decimal, Byte, Int16, Int32, Float, Double, Timestamp, Int64, Int24, Date, Time, DateTime, Datetime, Year, Newdate, VarString, Bit, JSON, NewDecimal, Enum, Set, TinyBlob, MediumBlob, LongBlob, Blob, VarChar, String, Geometry, UByte, UInt16, UInt32, UInt64, UInt24, TinyText, MediumText, LongText, Text, VarBinary, Binary, Guid
-    }
-
-    public class QueryProperties
-    {
-        [DisplayFormat(DataFormatString = "Sql")]
-        [DefaultValue("SELECT ColumnName FROM TableName")]
-        public string Query { get; set; }
-
-        /// <summary>
-        /// Parameters for the database query
-        /// </summary>
-        public QueryParameter[] Parameters { get; set; }
-    }
-
-    public class QueryParameter
-    {
-        /// <summary>
-        /// The name of the parameter
-        /// </summary>
-        [DefaultValue("ParameterName")]
-        [DisplayFormat(DataFormatString = "Text")]
-        public string Name { get; set; }
-
-        /// <summary>
-        /// The value of the parameter
-        /// </summary>
-        [DefaultValue("Parameter value")]
-        [DisplayFormat(DataFormatString = "Text")]
-        public dynamic Value { get; set; }
-
-        /// <summary>
-        /// The type of the parameter
-        /// </summary>
-        [DefaultValue(QueryParameterType.VarChar)]
-        public QueryParameterType DataType { get; set; }
-    }
-
-    public class OutputProperties
-    {
-        [DefaultValue(QueryReturnType.Xml)]
-        public QueryReturnType ReturnType { get; set; }
-
-        /// <summary>
-        /// Xml specific output properties
-        /// </summary>
-        [UIHint(nameof(ReturnType), "", QueryReturnType.Xml)]
-        public XmlOutputProperties XmlOutput { get; set; }
-
-        /// <summary>
-        /// Json specific output properties
-        /// </summary>
-        [UIHint(nameof(ReturnType), "", QueryReturnType.Json)]
-        public JsonOutputProperties JsonOutput { get; set; }
-
-        /// <summary>
-        /// Csv specific output properties
-        /// </summary>
-        [UIHint(nameof(ReturnType), "", QueryReturnType.Csv)]
-        public CsvOutputProperties CsvOutput { get; set; }
-
-        /// <summary>
-        /// In case user wants to write results to a file instead of returning them to process
-        /// </summary>
-        public bool OutputToFile { get; set; }
-
-        /// <summary>
-        /// Output file properties
-        /// </summary>
-        [UIHint(nameof(OutputToFile), "", true)]
-        public OutputFileProperties OutputFile { get; set; }
-    }
-
+    #region CommonDefinitions
     public class ConnectionProperties
     {
         /// <summary>
@@ -118,7 +39,7 @@ namespace Frends.Community.MySql
     {
         public bool Success { get; set; }
         public string Message { get; set; }
-        public string Result { get; set; }
+        public dynamic Result { get; set; }
     }
 
     /// <summary>
@@ -196,4 +117,87 @@ namespace Frends.Community.MySql
         [DefaultValue("utf-8")]
         public string Encoding { get; set; }
     }
+    #endregion
+
+    #region QueryDefinitions
+    public enum QueryReturnType { Json, Xml, Csv };
+
+    /// <summary>
+    /// Enumerator representing MySql parameter data types
+    /// </summary>
+    public enum QueryParameterType
+    {
+        Decimal, Byte, Int16, Int32, Float, Double, Timestamp, Int64, Int24, Date, Time, DateTime, Datetime, Year, Newdate, VarString, Bit, JSON, NewDecimal, Enum, Set, TinyBlob, MediumBlob, LongBlob, Blob, VarChar, String, Geometry, UByte, UInt16, UInt32, UInt64, UInt24, TinyText, MediumText, LongText, Text, VarBinary, Binary, Guid
+    }
+
+    public class QueryProperties
+    {
+        [DisplayFormat(DataFormatString = "Sql")]
+        [DefaultValue("SELECT ColumnName FROM TableName")]
+        public string Query { get; set; }
+
+        /// <summary>
+        /// Parameters for the database query
+        /// </summary>
+        public QueryParameter[] Parameters { get; set; }
+    }
+
+    public class QueryParameter
+    {
+        /// <summary>
+        /// The name of the parameter
+        /// </summary>
+        [DefaultValue("ParameterName")]
+        [DisplayFormat(DataFormatString = "Text")]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// The value of the parameter
+        /// </summary>
+        [DefaultValue("Parameter value")]
+        [DisplayFormat(DataFormatString = "Text")]
+        public dynamic Value { get; set; }
+
+        /// <summary>
+        /// The type of the parameter
+        /// </summary>
+        [DefaultValue(QueryParameterType.VarChar)]
+        public QueryParameterType DataType { get; set; }
+    }
+
+    public class QueryOutputProperties
+    {
+        [DefaultValue(QueryReturnType.Xml)]
+        public QueryReturnType ReturnType { get; set; }
+
+        /// <summary>
+        /// Xml specific output properties
+        /// </summary>
+        [UIHint(nameof(ReturnType), "", QueryReturnType.Xml)]
+        public XmlOutputProperties XmlOutput { get; set; }
+
+        /// <summary>
+        /// Json specific output properties
+        /// </summary>
+        [UIHint(nameof(ReturnType), "", QueryReturnType.Json)]
+        public JsonOutputProperties JsonOutput { get; set; }
+
+        /// <summary>
+        /// Csv specific output properties
+        /// </summary>
+        [UIHint(nameof(ReturnType), "", QueryReturnType.Csv)]
+        public CsvOutputProperties CsvOutput { get; set; }
+
+        /// <summary>
+        /// In case user wants to write results to a file instead of returning them to process
+        /// </summary>
+        public bool OutputToFile { get; set; }
+
+        /// <summary>
+        /// Output file properties
+        /// </summary>
+        [UIHint(nameof(OutputToFile), "", true)]
+        public OutputFileProperties OutputFile { get; set; }
+    }
+    #endregion
 }

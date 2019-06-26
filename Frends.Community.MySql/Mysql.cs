@@ -1,8 +1,13 @@
-﻿using System;
-using System.ComponentModel;
+﻿using Newtonsoft.Json;
+using System;
+using System.Data;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+using System.ComponentModel;
 using MySql;
 using MySql.Data;
 using MySql.Data.MySqlClient;
@@ -12,7 +17,7 @@ namespace Frends.Community.MySql
     /// <summary>
     /// Task for performing queries in MySql databases. See documentation at https://github.com/CommunityHiQ/Frends.Community.MySQL
     /// </summary>
-    public class QueryTask
+    public class MySql
     {
         /// <summary>
         /// Task for performing queries in MySql databases. See documentation at https://github.com/CommunityHiQ/Frends.Community.MySQL
@@ -25,7 +30,7 @@ namespace Frends.Community.MySql
         /// <returns>Object { bool Success, string Message, string Result }</returns>
         public static async Task<Output> Query(
             [PropertyTab] QueryProperties query,
-            [PropertyTab] OutputProperties output,
+            [PropertyTab] QueryOutputProperties output,
             [PropertyTab] ConnectionProperties connection,
             [PropertyTab] Options options,
             CancellationToken cancellationToken)
@@ -44,7 +49,7 @@ namespace Frends.Community.MySql
                             
                             // check for command parameters and set them
                             if (query.Parameters != null)
-                                command.Parameters.AddRange(query.Parameters.Select(p => CreateMySqlParameter(p)).ToArray());
+                                command.Parameters.AddRange(query.Parameters.Select(p => CreateMySqlQueryParameter(p)).ToArray());
 
                             // declare Result object
                             string queryResult;
@@ -93,9 +98,9 @@ namespace Frends.Community.MySql
             }
         }
         /// <summary>
-        /// Gets list of parameters available for MySql.
+        /// Gets list of parameters available for MySql Query.
         /// </summary>
-        public static MySqlParameter CreateMySqlParameter(QueryParameter parameter)
+        public static MySqlParameter CreateMySqlQueryParameter(QueryParameter parameter)
         {
             return new MySqlParameter()
             {
@@ -104,5 +109,6 @@ namespace Frends.Community.MySql
                 MySqlDbType = parameter.DataType.ConvertEnum<MySqlDbType>()
             };
         }
+
     }
 }

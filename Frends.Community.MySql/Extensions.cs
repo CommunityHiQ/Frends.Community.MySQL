@@ -29,7 +29,7 @@ namespace Frends.Community.MySql
         /// <param name="output"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public static async Task<string> ToXmlAsync(this MySqlCommand command, OutputProperties output, CancellationToken cancellationToken)
+        public static async Task<string> ToXmlAsync(this MySqlCommand command, QueryOutputProperties output, CancellationToken cancellationToken)
         {
             command.CommandType = CommandType.Text;
             
@@ -83,7 +83,7 @@ namespace Frends.Community.MySql
         /// <param name="output"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public static async Task<string> ToJsonAsync(this MySqlCommand command, OutputProperties output, CancellationToken cancellationToken)
+        public static async Task<string> ToJsonAsync(this MySqlCommand command, QueryOutputProperties output, CancellationToken cancellationToken)
         {
             command.CommandType = CommandType.Text;
             
@@ -162,7 +162,7 @@ namespace Frends.Community.MySql
         /// <param name="output"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public static async Task<string> ToCsvAsync(this MySqlCommand command, OutputProperties output, CancellationToken cancellationToken)
+        public static async Task<string> ToCsvAsync(this MySqlCommand command, QueryOutputProperties output, CancellationToken cancellationToken)
         {
             command.CommandType = CommandType.Text;
 
