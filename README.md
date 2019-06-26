@@ -68,7 +68,7 @@ Executes query against MySql database.
 
 | Property    | Type       | Description     | Example |
 | ------------| -----------| --------------- | ------- |
-| Connection string | string | MySql database connection string | `Data Source=(DESCRIPTION=(ADDRESS = (PROTOCOL = TCP)(HOST = MySqlHost)(PORT = 1521))(CONNECT_DATA = (SERVICE_NAME = MYSERVICE)))` |
+| Connection string | string | MySql database connection string | `server=<<your host>>;uid=<<your username>>;pwd=<<your password>>;database=<<your database name>>;` |
 | Timeout seconds | int | Query timeout in seconds | `60` |
 
 ### Options
