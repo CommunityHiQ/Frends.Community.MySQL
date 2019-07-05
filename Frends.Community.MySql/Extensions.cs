@@ -116,21 +116,7 @@ namespace Frends.Community.MySql
                             // add row element name
                             await writer.WritePropertyNameAsync(reader.GetName(i), cancellationToken);
                             
-                            // add row element value
-                            switch (reader.GetDataTypeName(i))
-                            {
-                                case "Decimal":
-                                    MySqlDecimal v = reader.GetMySqlDecimal(i);
-                                    v.Precision = 28;
-                                    var FieldValue = v.Value;
-
-                                    await writer.WriteValueAsync((decimal)FieldValue, cancellationToken);
-                                   
-                                    break;
-                                default:
-                                    await writer.WriteValueAsync(reader.GetValue(i) ?? string.Empty, cancellationToken);
-                                    break;
-                            }
+                            await writer.WriteValueAsync(reader.GetValue(i) ?? string.Empty, cancellationToken);
 
                             cancellationToken.ThrowIfCancellationRequested();
                         }
