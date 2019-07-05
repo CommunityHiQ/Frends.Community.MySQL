@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Company>HiQ Finland</Company>
-    <Description>Task for performing oracle queries</Description>
+    <Description>Task for performing MySql queries</Description>
     <FileVersion>1.0.3.0</FileVersion>
     <AssemblyVersion>1.0.3.0</AssemblyVersion>
     <Version>1.0.3</Version>
