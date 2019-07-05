@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using MySql.Data.MySqlClient;
 
 #pragma warning disable 1591
 
@@ -12,7 +13,7 @@ namespace Frends.Community.MySql
         /// MySql connection string
         /// </summary>
         [DisplayFormat(DataFormatString = "Text")]
-        [DefaultValue("server=localhost;uid=SYSTEM;pwd=<<your password>>;database=test;")]
+        [DefaultValue("server=<<server>>;uid=<<username>>;pwd=<<password>>;database=<<database>>")]
         public string ConnectionString { get; set; }
 
         /// <summary>
@@ -121,15 +122,7 @@ namespace Frends.Community.MySql
 
     #region QueryDefinitions
     public enum QueryReturnType { Json, Xml, Csv };
-
-    /// <summary>
-    /// Enumerator representing MySql parameter data types
-    /// </summary>
-    public enum QueryParameterType
-    {
-        Decimal, Byte, Int16, Int32, Float, Double, Timestamp, Int64, Int24, Date, Time, DateTime, Datetime, Year, Newdate, VarString, Bit, JSON, NewDecimal, Enum, Set, TinyBlob, MediumBlob, LongBlob, Blob, VarChar, String, Geometry, UByte, UInt16, UInt32, UInt64, UInt24, TinyText, MediumText, LongText, Text, VarBinary, Binary, Guid
-    }
-
+        
     public class QueryProperties
     {
         [DisplayFormat(DataFormatString = "Sql")]
@@ -157,12 +150,12 @@ namespace Frends.Community.MySql
         [DefaultValue("Parameter value")]
         [DisplayFormat(DataFormatString = "Text")]
         public dynamic Value { get; set; }
-
+        
         /// <summary>
         /// The type of the parameter
         /// </summary>
-        [DefaultValue(QueryParameterType.VarChar)]
-        public QueryParameterType DataType { get; set; }
+        [DefaultValue(MySqlDbType.VarChar)]
+        public MySqlDbType DataType { get; set; }
     }
 
     public class QueryOutputProperties
@@ -200,4 +193,5 @@ namespace Frends.Community.MySql
         public OutputFileProperties OutputFile { get; set; }
     }
     #endregion
+    
 }
