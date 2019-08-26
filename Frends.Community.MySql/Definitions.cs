@@ -154,7 +154,6 @@ namespace Frends.Community.MySql
         /// <summary>
         /// The type of the parameter
         /// </summary>
-        [DefaultValue(MySqlDbType.VarChar)]
         public MySqlDbType DataType { get; set; }
     }
 

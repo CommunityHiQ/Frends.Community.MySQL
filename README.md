@@ -103,7 +103,6 @@ Example result with return type JSON
 ]
 ```
 
-
 To access query result, use 
 ```
 #result.Result
@@ -144,5 +143,4 @@ NOTE: Be sure to merge the latest from "upstream" before making a pull request!
 
 | Version | Changes |
 | ----- | ----- |
-| 1.0.0 | Initial version of MySql Query Task |
-| 2.0.0 | Breaking changes: target .netstandard, more user friendly task settings, csv output, all output types are now possibly to stream directly into a file |
+| 1.0.7 | Initial version of MySql Query Task |
