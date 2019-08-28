@@ -12,8 +12,8 @@ namespace Frends.Community.MySql
         /// <summary>
         /// MySql connection string
         /// </summary>
-        [DisplayFormat(DataFormatString = "Text")]
-        [DefaultValue("server=<<server>>;uid=<<username>>;pwd=<<password>>;database=<<database>>")]
+        [DefaultValue("\"server=<<server>>;uid=<<username>>;pwd=<<password>>;database=<<database>>\"")]
+        [PasswordPropertyText]
         public string ConnectionString { get; set; }
 
         /// <summary>
@@ -151,10 +151,6 @@ namespace Frends.Community.MySql
         [DisplayFormat(DataFormatString = "Text")]
         public dynamic Value { get; set; }
         
-        /// <summary>
-        /// The type of the parameter
-        /// </summary>
-        public MySqlDbType DataType { get; set; }
     }
 
     public class QueryOutputProperties
@@ -192,5 +188,6 @@ namespace Frends.Community.MySql
         public OutputFileProperties OutputFile { get; set; }
     }
     #endregion
+
     
 }

@@ -19,6 +19,7 @@ namespace Frends.Community.MySql
     /// </summary>
     public class MySql
     {
+        #region QueryTask
         /// <summary>
         /// Task for performing queries in MySql databases. See documentation at https://github.com/CommunityHiQ/Frends.Community.MySQL
         /// </summary>
@@ -105,10 +106,11 @@ namespace Frends.Community.MySql
             return new MySqlParameter()
             {
                 ParameterName = parameter.Name,
-                Value = parameter.Value,
-                MySqlDbType = parameter.DataType.ConvertEnum<MySqlDbType>()
+                Value = parameter.Value
             };
         }
+        #endregion
 
+        
     }
 }
