@@ -18,7 +18,7 @@ namespace Frends.Community.MySql
     /// <summary>
     /// Example task package for handling files
     /// </summary>
-    public static class QueryTask
+    public static class MySqlTasks
     {
 
 

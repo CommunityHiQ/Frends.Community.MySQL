@@ -15,7 +15,7 @@ namespace Frends.Community.MySql.Tests
     // [Ignore("Cannot be run unless you have a properly configured MySql DB running on your local computer")]
     public class MySqlQueryTests
     {
-        private string connectionString = "server=localhost;uid=root;pwd=pw;database=test;";
+        private string connectionString = "server=localhost;uid=root;pwd=GGHHyyTT6655;database=test;";
 
         Options options = new Options
         {
@@ -97,7 +97,7 @@ namespace Frends.Community.MySql.Tests
 
             options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
 
-            var result = await QueryTask.ExecuteQuery(q, options, new CancellationToken());
+            var result = await MySqlTasks.ExecuteQuery(q, options, new CancellationToken());
 
             Assert.That(result.ToString(), Is.EqualTo(@"[
   {
@@ -124,7 +124,7 @@ namespace Frends.Community.MySql.Tests
 
             options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
 
-            Exception ex = Assert.ThrowsAsync<Exception>(() => QueryTask.ExecuteQuery(q, options, new CancellationToken()));
+            Exception ex = Assert.ThrowsAsync<Exception>(() => MySqlTasks.ExecuteQuery(q, options, new CancellationToken()));
             Assert.That(ex.Message.StartsWith("Query failed"));
         }
 
@@ -142,7 +142,7 @@ namespace Frends.Community.MySql.Tests
 
             options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
 
-           var result = await QueryTask.ExecuteProcedure(q, options, new CancellationToken());
+           var result = await MySqlTasks.ExecuteProcedure(q, options, new CancellationToken());
         }
         [Test, Order(5)]
         public void ShouldThrowException_CallStoredProcedure()
@@ -156,7 +156,7 @@ namespace Frends.Community.MySql.Tests
 
             options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
 
-            Exception ex = Assert.ThrowsAsync<Exception>(() => QueryTask.ExecuteQuery(q, options, new CancellationToken()));
+            Exception ex = Assert.ThrowsAsync<Exception>(() => MySqlTasks.ExecuteQuery(q, options, new CancellationToken()));
             Assert.That(ex.Message.StartsWith("Query failed"));
 
         }
@@ -178,7 +178,7 @@ namespace Frends.Community.MySql.Tests
             };
             options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
 
-            var result = await QueryTask.ExecuteQuery(q, options, new CancellationToken());
+            var result = await MySqlTasks.ExecuteQuery(q, options, new CancellationToken());
 
             Assert.That(result.ToString().Equals("1"));
 
@@ -202,7 +202,7 @@ namespace Frends.Community.MySql.Tests
 
             options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
 
-            var result = await QueryTask.ExecuteQuery(q, options, new CancellationToken());
+            var result = await MySqlTasks.ExecuteQuery(q, options, new CancellationToken());
 
             Assert.That(result.ToString(), Is.EqualTo(@"[
   {
@@ -224,7 +224,7 @@ namespace Frends.Community.MySql.Tests
 
             options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
 
-            Exception ex = Assert.ThrowsAsync<Exception>(() => QueryTask.ExecuteQuery(q, options, new CancellationToken()));
+            Exception ex = Assert.ThrowsAsync<Exception>(() => MySqlTasks.ExecuteQuery(q, options, new CancellationToken()));
             Assert.That(ex.Message.StartsWith("Format of the initialization string"));
 
         }
@@ -240,7 +240,7 @@ namespace Frends.Community.MySql.Tests
 
             options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
 
-            Exception ex = Assert.ThrowsAsync<TaskCanceledException>(() => QueryTask.ExecuteQuery(q, options, new CancellationToken(true)));
+            Exception ex = Assert.ThrowsAsync<TaskCanceledException>(() => MySqlTasks.ExecuteQuery(q, options, new CancellationToken(true)));
             Assert.That(ex.Message.StartsWith("A task was canceled"));
 
         }

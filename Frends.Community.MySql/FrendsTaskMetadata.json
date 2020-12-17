@@ -1,10 +1,10 @@
 ﻿{
   "Tasks": [
     {
-      "TaskMethod": "Frends.Community.MySql.MySql.ExecuteQuery"
+      "TaskMethod": "Frends.Community.MySql.MySqlTasks.ExecuteQuery"
     },
 	{
-	"TaskMethod": "Frends.Community.MySql.MySql.ExecuteProcedure"
+	"TaskMethod": "Frends.Community.MySql.MySqlTasks.ExecuteProcedure"
 	}
   ]
 }
