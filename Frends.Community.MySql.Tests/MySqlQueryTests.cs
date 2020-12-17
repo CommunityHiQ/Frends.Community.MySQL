@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Extensions;
 using MySql.Data.MySqlClient;
 
-namespace Frends.MySql.Tests
+namespace Frends.Community.MySql.Tests
 {
     /// <summary>
     /// THESE TESTS DO NOT WORK UNLESS YOU INSTALL MySql LOCALLY ON YOUR OWN COMPUTER!

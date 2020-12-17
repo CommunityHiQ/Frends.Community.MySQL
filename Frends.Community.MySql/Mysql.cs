@@ -13,7 +13,7 @@ using Newtonsoft.Json.Linq;
 using System.Dynamic;
 using System.Runtime.CompilerServices;
 
-namespace Frends.MySql
+namespace Frends.Community.MySql
 {
     /// <summary>
     /// Example task package for handling files

@@ -1,4 +1,4 @@
-# Frends.MySql
+# Frends.Community.MySql
 
 FRENDS Task for connecting to MySql database
 
@@ -12,7 +12,7 @@ FRENDS Task for connecting to MySql database
 
 # Installing
 
-You can install the task via FRENDS UI Task view, by searching for packages. You can also download the latest NuGet package from https://www.myget.org/feed/frends/package/nuget/Frends.MySql and import it manually via the Task view.
+You can install the task via FRENDS UI Task view, by searching for packages. You can also download the latest NuGet package from https://www.myget.org/feed/frends/package/nuget/Frends.Community.MySql and import it manually via the Task view.
 
 # Task
 
@@ -68,7 +68,7 @@ Same as in ExecuteQuery: See [Parameter Properties](#executequery)
 
 Clone a copy of the repo
 
-`git clone https://github.com/CommunityHiQ/Frends.MySQL.git`
+`git clone https://github.com/CommunityHiQ/Frends.Community.MySql.git`
 
 Rebuild the project
 

@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 
 #pragma warning disable 1591
 
-namespace Frends.MySql
+namespace Frends.Community.MySql
 {
 
     /// <summary>

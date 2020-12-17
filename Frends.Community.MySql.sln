@@ -8,9 +8,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Frends.MySql.Tests", "Frends.MySql.Tests\Frends.MySql.Tests.csproj", "{576283AE-1F77-41C2-A321-08417D9D1623}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Frends.Community.MySql.Tests", "Frends.Community.MySql.Tests\Frends.Community.MySql.Tests.csproj", "{576283AE-1F77-41C2-A321-08417D9D1623}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Frends.MySql", "Frends.MySql\Frends.MySql.csproj", "{7D068A57-C073-4DBC-8A82-3E7F941A849C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Frends.Community.MySql", "Frends.Community.MySql\Frends.Community.MySql.csproj", "{7D068A57-C073-4DBC-8A82-3E7F941A849C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
