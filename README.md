@@ -99,5 +99,5 @@ NOTE: Be sure to merge the latest from "upstream" before making a pull request!
 | Version | Changes |
 | ----- | ----- |
 | 1.0.7 | Initial version of MySql Query Task |
-| 1.9.0 | Tasks are now based on dapper.|
+| 2.0.0 | Task parameters are completely chnaged, so manual work is needed when updating to this version. Tasks are now based on dapper.|
 
