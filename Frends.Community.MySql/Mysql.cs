@@ -1,17 +1,15 @@
-﻿using Dapper;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Diagnostics.CodeAnalysis;
+using System.Dynamic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.ComponentModel;
-using System.Data;
-using System.Data.Common;
+using Dapper;
 using MySql.Data.MySqlClient;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Dynamic;
-using System.Runtime.CompilerServices;
 
 namespace Frends.Community.MySql
 {
@@ -56,7 +54,7 @@ namespace Frends.Community.MySql
                 CommandType.StoredProcedure, cancellationToken);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security",
+        [SuppressMessage("Security",
             "CA2100:Review SQL queries for security vulnerabilities", Justification =
                 "One is able to write quereis in FRENDS. It is up to a FRENDS process prevent injections.")]
         private static async Task<JToken> GetMySqlCommandResult(
@@ -130,34 +128,32 @@ namespace Frends.Community.MySql
                                 {
                                     trans.Rollback();
                                     trans.Dispose();
-                                    throw new Exception($"Query failed " + ex.Message);
+                                    throw new Exception("Query failed " + ex.Message);
 
                                 }
 
                             }
                         }
-                        else
+
+                        using (var trans = conn.BeginTransaction(isolationLevel))
                         {
-                            using (var trans = conn.BeginTransaction(isolationLevel))
+                            try
                             {
-                                try
-                                {
-                                    var result = await conn.QueryAsync(query, parameterObject, trans, command.CommandTimeout, command.CommandType)
-                                        .ConfigureAwait(false);
+                                var result = await conn.QueryAsync(query, parameterObject, trans, command.CommandTimeout, command.CommandType)
+                                    .ConfigureAwait(false);
 
-                                    trans.Commit();
+                                trans.Commit();
 
-                                    return JToken.FromObject(result);
-                                }
-                                catch (Exception ex)
-                                {
-                                    trans.Rollback();
-                                    trans.Dispose();
-                                    throw new Exception($"Query failed " + ex.Message);
-
-                                }
+                                return JToken.FromObject(result);
+                            }
+                            catch (Exception ex)
+                            {
+                                trans.Rollback();
+                                trans.Dispose();
+                                throw new Exception("Query failed " + ex.Message);
 
                             }
+
                         }
 
                     }

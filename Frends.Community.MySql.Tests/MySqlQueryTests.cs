@@ -15,9 +15,8 @@ namespace Frends.Community.MySql.Tests
     // [Ignore("Cannot be run unless you have a properly configured MySql DB running on your local computer")]
     public class MySqlQueryTests
     {
-        private string connectionString = "server=localhost;uid=root;pwd=GGHHyyTT6655;database=test;";
-
-        Options options = new Options
+        private readonly string _connectionString = "server=localhost;uid=root;pwd=GGHHyyTT6655;database=test;";
+        readonly Options _options = new Options
         {
             TimeoutSeconds = 300
         };
@@ -26,7 +25,7 @@ namespace Frends.Community.MySql.Tests
         [Test, Order(1)]
         public async Task OneTimeSetUp()
         {
-            using (var connection = new MySqlConnection(connectionString))
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
                 using (var command = new MySqlCommand("CREATE TABLE IF NOT EXISTS DecimalTest(DecimalValue decimal(38,30))", connection))
@@ -56,7 +55,7 @@ namespace Frends.Community.MySql.Tests
         [Test, Order(50)]
         public async Task OneTimeTearDown()
         {
-            using (var connection = new MySqlConnection(connectionString))
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
 
@@ -82,14 +81,14 @@ namespace Frends.Community.MySql.Tests
         {
             var q = new QueryInput
             {
-                ConnectionString = connectionString,
+                ConnectionString = _connectionString,
                 CommandText = @"select  * from hodortest limit 2"
 
             };
 
-            options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
+            _options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
 
-            var result = await MySqlTasks.ExecuteQuery(q, options, new CancellationToken());
+            var result = await MySqlTasks.ExecuteQuery(q, _options, new CancellationToken());
 
             Assert.That(result.ToString(), Is.EqualTo(@"[
   {
@@ -109,14 +108,14 @@ namespace Frends.Community.MySql.Tests
         {
             var q = new QueryInput
             {
-                ConnectionString = connectionString,
+                ConnectionString = _connectionString,
                 CommandText = @"select  * from tablex limit 2"
             };
 
 
-            options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
+            _options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
 
-            Exception ex = Assert.ThrowsAsync<Exception>(() => MySqlTasks.ExecuteQuery(q, options, new CancellationToken()));
+            Exception ex = Assert.ThrowsAsync<Exception>(() => MySqlTasks.ExecuteQuery(q, _options, new CancellationToken()));
             Assert.That(ex != null && ex.Message.StartsWith("Query failed"));
         }
 
@@ -127,14 +126,14 @@ namespace Frends.Community.MySql.Tests
         {
             var q = new QueryInput
             {
-                ConnectionString = connectionString,
+                ConnectionString = _connectionString,
                 CommandText = @"GetAllFromHodorTest"
 
             };
 
-            options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
+            _options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
 
-           var result = await MySqlTasks.ExecuteProcedure(q, options, new CancellationToken());
+           var result = await MySqlTasks.ExecuteProcedure(q, _options, new CancellationToken());
 
            Assert.That(result.ToString().Equals("TODO"));
         }
@@ -143,14 +142,14 @@ namespace Frends.Community.MySql.Tests
         {
             var q = new QueryInput
             {
-                ConnectionString = connectionString,
+                ConnectionString = _connectionString,
                 CommandText = @"GetAllFromHodorTest00"
 
             };
 
-            options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
+            _options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
 
-            Exception ex = Assert.ThrowsAsync<Exception>(() => MySqlTasks.ExecuteQuery(q, options, new CancellationToken()));
+            Exception ex = Assert.ThrowsAsync<Exception>(() => MySqlTasks.ExecuteQuery(q, _options, new CancellationToken()));
             Assert.That(ex != null && ex.Message.StartsWith("Query failed"));
 
         }
@@ -166,20 +165,16 @@ namespace Frends.Community.MySql.Tests
             int rndValue = rnd.Next(1000);
             var q = new QueryInput
             {
-                ConnectionString = connectionString,
+                ConnectionString = _connectionString,
                 CommandText = "insert into HodorTest (name, value) values ( " + rndName.AddDoubleQuote() + " , " + rndValue + " );"
 
             };
-            options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
+            _options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
 
-            var result = await MySqlTasks.ExecuteQuery(q, options, new CancellationToken());
+            var result = await MySqlTasks.ExecuteQuery(q, _options, new CancellationToken());
 
             Assert.That(result.ToString().Equals("1"));
 
-        }
-        public static string AddDoubleQuotes(string value)
-        {
-            return "\"" + value + "\"";
         }
 
 
@@ -188,15 +183,15 @@ namespace Frends.Community.MySql.Tests
         {
             var q = new QueryInput
             {
-                ConnectionString = connectionString,
+                ConnectionString = _connectionString,
                 CommandText = "SELECT value FROM HodorTest WHERE name LIKE 'hodor' limit 1 "
 
 
             };
 
-            options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
+            _options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
 
-            var result = await MySqlTasks.ExecuteQuery(q, options, new CancellationToken());
+            var result = await MySqlTasks.ExecuteQuery(q, _options, new CancellationToken());
 
             Assert.That(result.ToString(), Is.EqualTo(@"[
   {
@@ -211,14 +206,14 @@ namespace Frends.Community.MySql.Tests
         {
             var q = new QueryInput
             {
-                ConnectionString = connectionString + "nonsense",
+                ConnectionString = _connectionString + "nonsense",
                 CommandText = "SELECT value FROM HodorTest WHERE name LIKE 'hodor' limit 1 "
 
             };
 
-            options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
+            _options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
 
-            Exception ex = Assert.ThrowsAsync<Exception>(() => MySqlTasks.ExecuteQuery(q, options, new CancellationToken()));
+            Exception ex = Assert.ThrowsAsync<Exception>(() => MySqlTasks.ExecuteQuery(q, _options, new CancellationToken()));
             Assert.That(ex != null && ex.Message.StartsWith("Format of the initialization string"));
 
         }
@@ -227,14 +222,14 @@ namespace Frends.Community.MySql.Tests
         {
             var q = new QueryInput
             {
-                ConnectionString = connectionString + "nonsense",
+                ConnectionString = _connectionString + "nonsense",
                 CommandText = "SELECT value FROM HodorTest WHERE name LIKE 'hodor' limit 1 "
 
             };
 
-            options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
+            _options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
 
-            Exception ex = Assert.ThrowsAsync<TaskCanceledException>(() => MySqlTasks.ExecuteQuery(q, options, new CancellationToken(true)));
+            Exception ex = Assert.ThrowsAsync<TaskCanceledException>(() => MySqlTasks.ExecuteQuery(q, _options, new CancellationToken(true)));
             Assert.That(ex != null && ex.Message.StartsWith("A task was canceled"));
 
         }
