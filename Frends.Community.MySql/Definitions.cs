@@ -1,7 +1,5 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json.Linq;
 
 #pragma warning disable 1591
 

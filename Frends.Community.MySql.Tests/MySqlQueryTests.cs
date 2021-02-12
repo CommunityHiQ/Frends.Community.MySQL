@@ -1,10 +1,10 @@
 ﻿using System;
 using System.IO;
-using NUnit.Framework;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Extensions;
 using MySql.Data.MySqlClient;
+using NUnit.Framework;
 
 namespace Frends.Community.MySql.Tests
 {
@@ -29,33 +29,25 @@ namespace Frends.Community.MySql.Tests
             using (var connection = new MySqlConnection(connectionString))
             {
                 await connection.OpenAsync();
-                try
+                using (var command = new MySqlCommand("CREATE TABLE IF NOT EXISTS DecimalTest(DecimalValue decimal(38,30))", connection))
                 {
-                    using (var command = new MySqlCommand("CREATE TABLE IF NOT EXISTS DecimalTest(DecimalValue decimal(38,30))", connection))
-                    {
-                        await command.ExecuteNonQueryAsync();
-                    }
-                    using (var command = new MySqlCommand("insert into DecimalTest (DecimalValue) values (1.123456789123456789123456789123)", connection))
-                    {
-                        await command.ExecuteNonQueryAsync();
-                    }
-                    using (var command = new MySqlCommand("CREATE TABLE IF NOT EXISTS HodorTest(name varchar(15), value int(10))", connection))
-                    {
-                        await command.ExecuteNonQueryAsync();
-                    }
-                    using (var command = new MySqlCommand("insert into HodorTest (name, value) values ('hodor', 123), ('jon', 321);", connection))
-                    {
-                        await command.ExecuteNonQueryAsync();
-                    }
-                    using (var command = new MySqlCommand("DROP PROCEDURE IF EXISTS GetAllFromHodorTest; CREATE PROCEDURE GetAllFromHodorTest() BEGIN SELECT * FROM HodorTest; END", connection))
-                    {
-                        await command.ExecuteNonQueryAsync();
-                    }
+                    await command.ExecuteNonQueryAsync();
                 }
-                catch (Exception)
+                using (var command = new MySqlCommand("insert into DecimalTest (DecimalValue) values (1.123456789123456789123456789123)", connection))
                 {
-                    // table probably/procedure exist already
-                    throw;
+                    await command.ExecuteNonQueryAsync();
+                }
+                using (var command = new MySqlCommand("CREATE TABLE IF NOT EXISTS HodorTest(name varchar(15), value int(10))", connection))
+                {
+                    await command.ExecuteNonQueryAsync();
+                }
+                using (var command = new MySqlCommand("insert into HodorTest (name, value) values ('hodor', 123), ('jon', 321);", connection))
+                {
+                    await command.ExecuteNonQueryAsync();
+                }
+                using (var command = new MySqlCommand("DROP PROCEDURE IF EXISTS GetAllFromHodorTest; CREATE PROCEDURE GetAllFromHodorTest() BEGIN SELECT * FROM HodorTest; END", connection))
+                {
+                    await command.ExecuteNonQueryAsync();
                 }
             }
         }
@@ -125,7 +117,7 @@ namespace Frends.Community.MySql.Tests
             options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
 
             Exception ex = Assert.ThrowsAsync<Exception>(() => MySqlTasks.ExecuteQuery(q, options, new CancellationToken()));
-            Assert.That(ex.Message.StartsWith("Query failed"));
+            Assert.That(ex != null && ex.Message.StartsWith("Query failed"));
         }
 
 
@@ -143,6 +135,8 @@ namespace Frends.Community.MySql.Tests
             options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
 
            var result = await MySqlTasks.ExecuteProcedure(q, options, new CancellationToken());
+
+           Assert.That(result.ToString().Equals("TODO"));
         }
         [Test, Order(5)]
         public void ShouldThrowException_CallStoredProcedure()
@@ -157,7 +151,7 @@ namespace Frends.Community.MySql.Tests
             options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
 
             Exception ex = Assert.ThrowsAsync<Exception>(() => MySqlTasks.ExecuteQuery(q, options, new CancellationToken()));
-            Assert.That(ex.Message.StartsWith("Query failed"));
+            Assert.That(ex != null && ex.Message.StartsWith("Query failed"));
 
         }
 
@@ -225,7 +219,7 @@ namespace Frends.Community.MySql.Tests
             options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
 
             Exception ex = Assert.ThrowsAsync<Exception>(() => MySqlTasks.ExecuteQuery(q, options, new CancellationToken()));
-            Assert.That(ex.Message.StartsWith("Format of the initialization string"));
+            Assert.That(ex != null && ex.Message.StartsWith("Format of the initialization string"));
 
         }
         [Test, Order(9)]
@@ -241,7 +235,7 @@ namespace Frends.Community.MySql.Tests
             options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
 
             Exception ex = Assert.ThrowsAsync<TaskCanceledException>(() => MySqlTasks.ExecuteQuery(q, options, new CancellationToken(true)));
-            Assert.That(ex.Message.StartsWith("A task was canceled"));
+            Assert.That(ex != null && ex.Message.StartsWith("A task was canceled"));
 
         }
 
