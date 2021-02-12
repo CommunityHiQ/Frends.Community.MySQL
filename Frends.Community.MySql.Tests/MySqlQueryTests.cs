@@ -12,7 +12,7 @@ namespace Frends.Community.MySql.Tests
     /// THESE TESTS DO NOT WORK UNLESS YOU INSTALL MySql LOCALLY ON YOUR OWN COMPUTER!
     /// </summary>
     [TestFixture]
-    // [Ignore("Cannot be run unless you have a properly configured MySql DB running on your local computer")]
+    [Ignore("Cannot be run unless you have a properly configured MySql DB running on your local computer")]
     public class MySqlQueryTests
     {
         private readonly string _connectionString = "server=localhost;uid=root;pwd=GGHHyyTT6655;database=test;";
