@@ -1,116 +1,176 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
-using System.IO;
+using System.Diagnostics.CodeAnalysis;
+using System.Dynamic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml.Linq;
-using System.ComponentModel;
-using MySql;
-using MySql.Data;
+using Dapper;
 using MySql.Data.MySqlClient;
+using Newtonsoft.Json.Linq;
 
 namespace Frends.Community.MySql
 {
     /// <summary>
-    /// Task for performing queries in MySql databases. See documentation at https://github.com/CommunityHiQ/Frends.Community.MySQL
+    /// Example task package for handling files
     /// </summary>
-    public class MySql
+    public static class MySqlTasks
     {
-        #region QueryTask
+
+
         /// <summary>
-        /// Task for performing queries in MySql databases. See documentation at https://github.com/CommunityHiQ/Frends.Community.MySQL
+        /// Task for performing queries in Oracle databases. See documentation at https://github.com/CommunityHiQ/Frends.Community.Oracle.Query
         /// </summary>
         /// <param name="query"></param>
-        /// <param name="output"></param>
-        /// <param name="connection"></param>
         /// <param name="options"></param>
         /// <param name="cancellationToken"></param>
-        /// <returns>Object { bool Success, string Message, string Result }</returns>
-        public static async Task<Output> Query(
-            [PropertyTab] QueryProperties query,
-            [PropertyTab] QueryOutputProperties output,
-            [PropertyTab] ConnectionProperties connection,
+        /// <returns>Object { bool Success, string Message, JToken Result }</returns>
+        public static async Task<JToken> ExecuteQuery(
+            [PropertyTab] QueryInput query,
             [PropertyTab] Options options,
             CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            return await GetMySqlCommandResult(query.CommandText, query.ConnectionString, query.Parameters, options,
+                CommandType.Text, cancellationToken);
+        }
+
+        /// <summary>
+        /// Task for performing queries in Oracle databases. See documentation at https://github.com/CommunityHiQ/Frends.Community.Oracle.Query
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="options"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>Object { bool Success, string Message, JToken Result }</returns>
+        public static async Task<JToken> ExecuteProcedure(
+            [PropertyTab] QueryInput query,
+            [PropertyTab] Options options,
+            CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return await GetMySqlCommandResult(query.CommandText, query.ConnectionString, query.Parameters, options,
+                CommandType.StoredProcedure, cancellationToken);
+        }
+
+        [SuppressMessage("Security",
+            "CA2100:Review SQL queries for security vulnerabilities", Justification =
+                "One is able to write quereis in FRENDS. It is up to a FRENDS process prevent injections.")]
+        private static async Task<JToken> GetMySqlCommandResult(
+            string query, string connectionString, IEnumerable<Parameter> parameters,
+            Options options,
+            CommandType commandType,
+            CancellationToken cancellationToken)
+        {
+
+            var scalarReturnQueries = new[] { "update ", "insert ", "drop ", "truncate ", "create ", "alter " };
+
             try
             {
-                using (var c = new MySqlConnection(connection.ConnectionString))
+                using (var conn = new MySqlConnection(connectionString))
                 {
-                    try
+                    await conn.OpenAsync(cancellationToken).ConfigureAwait(false);
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    IDictionary<string, object> parameterObject = new ExpandoObject();
+                    if (parameters != null)
                     {
-                        await c.OpenAsync(cancellationToken);
-
-                        using (var command = new MySqlCommand(query.Query, c))
+                        foreach (var parameter in parameters)
                         {
-                            command.CommandTimeout = connection.TimeoutSeconds;
-                            
-                            // check for command parameters and set them
-                            if (query.Parameters != null)
-                                command.Parameters.AddRange(query.Parameters.Select(p => CreateMySqlQueryParameter(p)).ToArray());
+                            parameterObject.Add(parameter.Name, parameter.Value);
+                        }
 
-                            // declare Result object
-                            string queryResult;
+                    }
 
-                            // set commandType according to ReturnType
-                            switch (output.ReturnType)
+                    using (var command = new MySqlCommand(query, conn))
+                    {
+                        command.CommandTimeout = options.TimeoutSeconds;
+                        command.CommandType = commandType;
+
+                        IsolationLevel isolationLevel;
+                        switch (options.MySqlTransactionIsolationLevel)
+                        {
+                            case MySqlTransactionIsolationLevel.ReadCommitted:
+                                isolationLevel = IsolationLevel.ReadCommitted;
+                                break;
+                            case MySqlTransactionIsolationLevel.ReadUncommitted:
+                                isolationLevel = IsolationLevel.ReadUncommitted;
+                                break;
+                            case MySqlTransactionIsolationLevel.RepeatableRead:
+                                isolationLevel = IsolationLevel.RepeatableRead;
+                                break;
+                            case MySqlTransactionIsolationLevel.Serializable:
+                                isolationLevel = IsolationLevel.Serializable;
+                                break;
+                            default:
+                                isolationLevel = IsolationLevel.RepeatableRead;
+                                break;
+                        }
+
+
+                        if (scalarReturnQueries.Any(query.TrimStart().ToLower().Contains) || command.CommandType == CommandType.StoredProcedure)
+                        {
+                            // scalar return
+                            using (var trans = conn.BeginTransaction(isolationLevel))
                             {
-                                case QueryReturnType.Xml:
-                                    queryResult = await command.ToXmlAsync(output, cancellationToken);
-                                    break;
-                                case QueryReturnType.Json:
-                                    queryResult = await command.ToJsonAsync(output, cancellationToken);
-                                    break;
-                                case QueryReturnType.Csv:
-                                    queryResult = await command.ToCsvAsync(output, cancellationToken);
-                                    break;
-                                default:
-                                    throw new ArgumentException("Task 'Return Type' was invalid! Check task properties.");
+                                try
+                                {
+                                    var affectedRows = await conn.ExecuteAsync(query, parameterObject, trans,
+                                        command.CommandTimeout, command.CommandType);
+
+                                    trans.Commit();
+
+                                    return JToken.FromObject(affectedRows);
+
+                                }
+                                catch (Exception ex)
+                                {
+                                    trans.Rollback();
+                                    trans.Dispose();
+                                    throw new Exception("Query failed " + ex.Message);
+
+                                }
+
+                            }
+                        }
+
+                        using (var trans = conn.BeginTransaction(isolationLevel))
+                        {
+                            try
+                            {
+                                var result = await conn.QueryAsync(query, parameterObject, trans, command.CommandTimeout, command.CommandType)
+                                    .ConfigureAwait(false);
+
+                                trans.Commit();
+
+                                return JToken.FromObject(result);
+                            }
+                            catch (Exception ex)
+                            {
+                                trans.Rollback();
+                                trans.Dispose();
+                                throw new Exception("Query failed " + ex.Message);
+
                             }
 
-                            return new Output { Success = true, Result = queryResult };
                         }
+
                     }
-                    catch (Exception ex)
-                    {
-                        throw ex;
-                    }
-                    finally
-                    {
-                        // Close connection
-                        c.Dispose();
-                        c.Close();
-                        MySqlConnection.ClearPool(c);
-                    }
+
                 }
             }
             catch (Exception ex)
             {
-                if (options.ThrowErrorOnFailure)
-                    throw ex;
-                return new Output
-                {
-                    Success = false,
-                    Message = ex.Message
-                };
+                throw new Exception(ex.Message);
             }
-        }
-        /// <summary>
-        /// Gets list of parameters available for MySql Query.
-        /// </summary>
-        public static MySqlParameter CreateMySqlQueryParameter(QueryParameter parameter)
-        {
-            return new MySqlParameter()
-            {
-                ParameterName = parameter.Name,
-                Value = parameter.Value
-            };
-        }
-        #endregion
 
-        
+
+        }
+
+
     }
+
+
 }
+

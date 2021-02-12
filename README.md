@@ -1,134 +1,89 @@
 # Frends.Community.MySql
 
-FRENDS 4 Task for querying data from MySql database
+FRENDS Task for connecting to MySql database
 
 - [Installing](#installing)
 - [Task](#tasks)
-	- [Query](#query)
+  - [ExecuteQuery](#executequery)
+  - [ExecuteProcedure](#ExecuteProcedure) 
 - [Building](#building)
 - [Contributing](#contributing)
 - [Change Log](#change-log)
 
 # Installing
 
-You can install the task via FRENDS UI Task View or you can find the nuget package from the following nuget feed
-'Insert nuget feed here'
+You can install the task via FRENDS UI Task view, by searching for packages. You can also download the latest NuGet package from https://www.myget.org/feed/frends/package/nuget/Frends.Community.MySql and import it manually via the Task view.
 
 # Task
 
-## Query
+## ExecuteQuery
 
-Executes query against MySql database.
+Execute queries against the MySql database and return result of query in JToken.
 
-### Query Properties
+### QueryInput Properties
 | Property    | Type       | Description     | Example |
 | ------------| -----------| --------------- | ------- |
-| Query | string | The query to execute | `SELECT * FROM Table WHERE field = @paramName`|
-| Parameters | array[Query Parameter] | Possible query parameters. See [Query Parameter](#query-parameter) |  |
+| Connection string | string | MySql database connection string | `server=<<your host>>;uid=<<your username>>;pwd=<<your password>>;database=<<your database name>>;` |
+| CommandText | string | SQL statement to execute at the data source. Usually query or name of a stored procedure. More info [here]( https://dev.mysql.com/doc/dev/connector-net/8.0/html/P_MySql_Data_MySqlClient_MySqlCommand_CommandText.htm). | `SELECT * FROM Table WHERE field = @paramName` |
+| Parameters | array[Query Parameter] | Possible parameters. See bellow. |  |
 
-#### Query Parameter
+#### Parameter Properties
 
 | Property    | Type       | Description     | Example |
 | ------------| -----------| --------------- | ------- |
 | Name | string | Parameter name used in Query property | `username` |
 | Value | string | Parameter value | `myUser` |
-| Data type | enum<> | Parameter data type | `VARCHAR` |
+| Data type | enum<> | Parameter [data type](https://dev.mysql.com/doc/dev/connector-net/8.0/html/T_MySql_Data_MySqlClient_MySqlDbType.htm). | `VARCHAR` |
+
+### Options Properties
+
+| Property    | Type       | Description     | Example |
+| ------------| -----------| --------------- | ------- |
+| Timeout seconds | int | Query timeout in seconds | `60` |
+| Throw error on failure | bool | Specify if Exception should be thrown when an error occurs. | `false` 
+| MySqlTransactionIsolationLevel | enum<> | Possible Transaction isolation level values are: `Default`, `ReadCommitted`, `Serializable`, `ReadUncommitted`, `RepeatableRead`. Levels are explained [here]( https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html) | `Default`
 
 ### Output
 | Property    | Type       | Description     | Example |
 | ------------| -----------| --------------- | ------- |
-| Return type | enum<Json, Xml, Csv> | Data return type format | `Json` |
-| OutputToFile | bool | true to write results to a file, false to return results to executin process | `true` |
+| Result | JToken | Query result in JToken | `[{ "Name": "Teela", "Age": 42, "Address": "Test road 123" }, { "Name": "Adam", "Age": 42, "Address": null }]` in case of update, insert, drop, truncate, create or alter queries result will be the number of affected rows |
 
-#### Xml Output
-| Property    | Type       | Description     | Example |
-| ------------| -----------| --------------- | ------- |
-| RootElementName | string | Xml root element name | `items` |
-| RowElementName |string | Xml row element name | `item` |
-| MaximumRows | int | The maximum amount of rows to return; defaults to -1 eg. no limit | `1000` |
 
-#### Json Output
-| Property    | Type       | Description     | Example |
-| ------------| -----------| --------------- | ------- |
-| Culture info | string | Specify the culture info to be used when parsing result to JSON. If this is left empty InvariantCulture will be used. [List of cultures](https://msdn.microsoft.com/en-us/library/ee825488(v=cs.20).aspx) Use the Language Culture Name. | `fi-FI` |
+## ExecuteProcedure
 
-#### Csv Output
-| Property    | Type       | Description     | Example |
-| ------------| -----------| --------------- | ------- |
-| IncludeHeaders | bool | Include field names in the first row | `true` |
-| CsvSeparator | string | Csv separator to use in headers and data items | `;` |
+Intended to run stored procedures
 
-#### Output File
-| Property    | Type       | Description     | Example |
-| ------------| -----------| --------------- | ------- |
-| Path | string | Output path with file name | `c:\temp\output.json` |
-| Encoding | string | Encoding to use for the output file | `utf-8` |
+### Parameter Properties
 
-### Connection
+Same as in ExecuteQuery: See [Parameter Properties](#executequery)
+
+### Output
 
 | Property    | Type       | Description     | Example |
 | ------------| -----------| --------------- | ------- |
-| Connection string | string | MySql database connection string | `server=<<your host>>;uid=<<your username>>;pwd=<<your password>>;database=<<your database name>>;` |
-| Timeout seconds | int | Query timeout in seconds | `60` |
+| Result | Int | the return value is the number of rows affected by the command. For all other types of statements, the return value is -1.  | `5` |
 
-### Options
-
-| Property    | Type       | Description     | Example |
-| ------------| -----------| --------------- | ------- |
-| Throw error on failure | bool | Specify if Exception should be thrown when error occurs. If set to *false*, task outcome can be checked from #result.Success property. | `false` |
-
-### Result
-
-Object { bool Success, string Message, string Result }
-
-If output type is file, then _Result_ indicates the written file path. Otherwise it will hold the query output in xml, json or csv.
-
-Example result with return type JSON
-
-*Success:* ``` True ```
-*Message:* ``` null ```
-*Result:* 
-```
-[ 
- {
-  "Name": "Teela",
-  "Age": 42,
-  "Address": "Test road 123"
- },
- {
-  "Name": "Adam",
-  "Age": 42,
-  "Address": null
- }
-]
-```
-
-To access query result, use 
-```
-#result.Result
-```
 
 # Building
 
 Clone a copy of the repo
 
-`git clone https://github.com/CommunityHiQ/Frends.Community.MySQL.git`
-
-Restore dependencies
-
-`nuget restore frends.community.MySql`
+`git clone https://github.com/CommunityHiQ/Frends.Community.MySql.git`
 
 Rebuild the project
 
-Run Tests with nunit3. Tests can be found under
+`dotnet build`
 
-`Frends.Community.MySqlTests\bin\Release\Frends.Community.MySql.Tests.dll`
+Run Tests
 
-Create a nuget package
+`dotnet test`
 
-`nuget pack nuspec/Frends.Community.MySql.nuspec`
+Create a NuGet package
+
+`dotnet pack --configuration Release`
 
 # Contributing
+
 When contributing to this repository, please first discuss the change you wish to make via issue, email, or any other method with the owners of this repository before making a change.
 
 1. Fork the repo on GitHub
@@ -144,3 +99,5 @@ NOTE: Be sure to merge the latest from "upstream" before making a pull request!
 | Version | Changes |
 | ----- | ----- |
 | 1.0.7 | Initial version of MySql Query Task |
+| 2.0.0 | Task parameters are completely chnaged, so manual work is needed when updating to this version. Tasks are now based on dapper.|
+

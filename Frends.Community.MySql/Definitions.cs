@@ -1,141 +1,51 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using MySql.Data.MySqlClient;
 
 #pragma warning disable 1591
 
 namespace Frends.Community.MySql
 {
-    #region CommonDefinitions
-    public class ConnectionProperties
+
+    /// <summary>
+    /// Transaction isolation level to use: https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html
+    /// </summary>
+    public enum MySqlTransactionIsolationLevel
+    {
+        Default,
+        ReadCommitted,
+        Serializable,
+        ReadUncommitted,
+        RepeatableRead
+    }
+
+
+    public class QueryInput
     {
         /// <summary>
-        /// MySql connection string
+        /// Mysql connection string
         /// </summary>
-        [DefaultValue("\"server=<<server>>;uid=<<username>>;pwd=<<password>>;database=<<database>>\"")]
         [PasswordPropertyText]
+        [DisplayFormat(DataFormatString = "Text")]
+        [DefaultValue("server=server;user=user;database=db;password=pw;")]
         public string ConnectionString { get; set; }
 
         /// <summary>
-        /// Timeout value in seconds
+        ///  SQL statement to execute at the data source. Usually query or name of a stored procedure. https://dev.mysql.com/doc/dev/connector-net/8.0/html/P_MySql_Data_MySqlClient_MySqlCommand_CommandText.htm
         /// </summary>
-        [DefaultValue(30)]
-        public int TimeoutSeconds { get; set; }
-    }
-
-    public class Options
-    {
-        /// <summary>
-        /// Choose if error should be thrown if Task failes.
-        /// Otherwise returns Object {Success = false }
-        /// </summary>
-        [DefaultValue(true)]
-        public bool ThrowErrorOnFailure { get; set; }
-    }
-
-    /// <summary>
-    /// Result to be returned from task
-    /// </summary>
-    public class Output
-    {
-        public bool Success { get; set; }
-        public string Message { get; set; }
-        public dynamic Result { get; set; }
-    }
-
-    /// <summary>
-    /// Xml output specific properties
-    /// </summary>
-    public class XmlOutputProperties
-    {
-        /// <summary>
-        /// Xml root element name
-        /// </summary>
-        [DisplayFormat(DataFormatString = "Text")]
-        [DefaultValue("ROWSET")]
-        public string RootElementName { get; set; }
-
-        /// <summary>
-        /// Xml row element name
-        /// </summary>
-        [DisplayFormat(DataFormatString = "Text")]
-        [DefaultValue("ROW")]
-        public string RowElementName { get; set; }
-
-        /// <summary>
-        /// The maximum amount of rows to return; defaults to -1 eg. no limit
-        /// </summary>
-        [DefaultValue(-1)]
-        public int MaxmimumRows { get; set; }
-    }
-
-    /// <summary>
-    /// Json output specific properties
-    /// </summary>
-    public class JsonOutputProperties
-    {
-        /// <summary>
-        /// Specify the culture info to be used when parsing result to JSON. If this is left empty InvariantCulture will be used. List of cultures: https://msdn.microsoft.com/en-us/library/ee825488(v=cs.20).aspx Use the Language Culture Name.
-        /// </summary>
-        [DisplayFormat(DataFormatString = "Text")]
-        public string CultureInfo { get; set; }
-    }
-
-    /// <summary>
-    /// Csv output specific properties
-    /// </summary>
-    public class CsvOutputProperties
-    {
-        /// <summary>
-        /// Include headers in csv output file?
-        /// </summary>
-        public bool IncludeHeaders { get; set; }
-
-        /// <summary>
-        /// Csv separator to use
-        /// </summary>
-        [DisplayFormat(DataFormatString = "Text")]
-        [DefaultValue(";")]
-        public string CsvSeparator { get; set; }
-    }
-
-    /// <summary>
-    /// Properties for when user wants to write the result directly into a file
-    /// </summary>
-    public class OutputFileProperties
-    {
-        /// <summary>
-        /// Query output filepath
-        /// </summary>
-        [DisplayFormat(DataFormatString = "Text")]
-        [DefaultValue("c:\\temp\\output.csv")]
-        public string Path { get; set; }
-
-        /// <summary>
-        /// Output file encoding
-        /// </summary>
-        [DisplayFormat(DataFormatString = "Text")]
-        [DefaultValue("utf-8")]
-        public string Encoding { get; set; }
-    }
-    #endregion
-
-    #region QueryDefinitions
-    public enum QueryReturnType { Json, Xml, Csv };
-        
-    public class QueryProperties
-    {
         [DisplayFormat(DataFormatString = "Sql")]
         [DefaultValue("SELECT ColumnName FROM TableName")]
-        public string Query { get; set; }
+        public string CommandText { get; set; }
 
         /// <summary>
         /// Parameters for the database query
         /// </summary>
-        public QueryParameter[] Parameters { get; set; }
+        public Parameter[] Parameters { get; set; }
     }
 
-    public class QueryParameter
+    /// <summary>
+    /// Set properties of parameters. More info https://dev.mysql.com/doc/dev/connector-net/8.0/html/T_MySql_Data_MySqlClient_MySqlParameterCollection.htm
+    /// </summary>
+    public class Parameter
     {
         /// <summary>
         /// The name of the parameter
@@ -150,44 +60,23 @@ namespace Frends.Community.MySql
         [DefaultValue("Parameter value")]
         [DisplayFormat(DataFormatString = "Text")]
         public dynamic Value { get; set; }
-        
     }
 
-    public class QueryOutputProperties
+    public class Options
     {
-        [DefaultValue(QueryReturnType.Xml)]
-        public QueryReturnType ReturnType { get; set; }
 
         /// <summary>
-        /// Xml specific output properties
+        /// Timeout value in seconds
         /// </summary>
-        [UIHint(nameof(ReturnType), "", QueryReturnType.Xml)]
-        public XmlOutputProperties XmlOutput { get; set; }
+        [DefaultValue(30)]
+        public int TimeoutSeconds { get; set; }
 
         /// <summary>
-        /// Json specific output properties
+        /// Transaction isolation level to use.
         /// </summary>
-        [UIHint(nameof(ReturnType), "", QueryReturnType.Json)]
-        public JsonOutputProperties JsonOutput { get; set; }
-
-        /// <summary>
-        /// Csv specific output properties
-        /// </summary>
-        [UIHint(nameof(ReturnType), "", QueryReturnType.Csv)]
-        public CsvOutputProperties CsvOutput { get; set; }
-
-        /// <summary>
-        /// In case user wants to write results to a file instead of returning them to process
-        /// </summary>
-        public bool OutputToFile { get; set; }
-
-        /// <summary>
-        /// Output file properties
-        /// </summary>
-        [UIHint(nameof(OutputToFile), "", true)]
-        public OutputFileProperties OutputFile { get; set; }
+        public MySqlTransactionIsolationLevel MySqlTransactionIsolationLevel { get; set; }
     }
-    #endregion
-
     
+
+
 }

@@ -1,12 +1,10 @@
-﻿using NUnit.Framework;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using MySql;
-using MySql.Data;
+using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Extensions;
 using MySql.Data.MySqlClient;
-using Frends.Community.MySql;
+using NUnit.Framework;
 
 namespace Frends.Community.MySql.Tests
 {
@@ -17,44 +15,47 @@ namespace Frends.Community.MySql.Tests
     [Ignore("Cannot be run unless you have a properly configured MySql DB running on your local computer")]
     public class MySqlQueryTests
     {
-        // Problems with local MySql, tests not implemented yet
-
-        ConnectionProperties _conn = new ConnectionProperties
+        private readonly string _connectionString = "server=localhost;uid=root;pwd=GGHHyyTT6655;database=test;";
+        readonly Options _options = new Options
         {
-            ConnectionString = "server=localhost;uid=SYSTEM;pwd=<<your password>>;database=test;",
             TimeoutSeconds = 300
         };
 
-        [OneTimeSetUp]
+        //[OneTimeSetUp]
+        [Test, Order(1)]
         public async Task OneTimeSetUp()
         {
-            using (var connection = new MySqlConnection(_conn.ConnectionString))
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
-
-                using (var command = new MySqlCommand("create table DecimalTest(DecimalValue decimal(38,35))", connection))
+                using (var command = new MySqlCommand("CREATE TABLE IF NOT EXISTS DecimalTest(DecimalValue decimal(38,30))", connection))
                 {
                     await command.ExecuteNonQueryAsync();
                 }
-                using (var command = new MySqlCommand("insert into DecimalTest (DecimalValue) values (1.12345678912345678912345678912345678)", connection))
+                using (var command = new MySqlCommand("insert into DecimalTest (DecimalValue) values (1.123456789123456789123456789123)", connection))
                 {
                     await command.ExecuteNonQueryAsync();
                 }
-                using (var command = new MySqlCommand("create table HodorTest(name varchar2(15), value number(10,0))", connection))
+                using (var command = new MySqlCommand("CREATE TABLE IF NOT EXISTS HodorTest(name varchar(15), value int(10))", connection))
                 {
                     await command.ExecuteNonQueryAsync();
                 }
-                using (var command = new MySqlCommand("insert all into HodorTest values('hodor', 123) into HodorTest values('jon', 321) select 1 from dual", connection))
+                using (var command = new MySqlCommand("insert into HodorTest (name, value) values ('hodor', 123), ('jon', 321);", connection))
+                {
+                    await command.ExecuteNonQueryAsync();
+                }
+                using (var command = new MySqlCommand("DROP PROCEDURE IF EXISTS GetAllFromHodorTest; CREATE PROCEDURE GetAllFromHodorTest() BEGIN SELECT * FROM HodorTest; END", connection))
                 {
                     await command.ExecuteNonQueryAsync();
                 }
             }
         }
 
-        [OneTimeTearDown]
+        //[OneTimeTearDown]
+        [Test, Order(50)]
         public async Task OneTimeTearDown()
         {
-            using (var connection = new MySqlConnection(_conn.ConnectionString))
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
 
@@ -66,117 +67,30 @@ namespace Frends.Community.MySql.Tests
                 {
                     await command.ExecuteNonQueryAsync();
                 }
+                using (var command = new MySqlCommand("DROP PROCEDURE GetAllFromHodorTest;", connection))
+                {
+                    await command.ExecuteNonQueryAsync();
+                }
             }
         }
 
-        [Test]
-        [Category("Xml tests")]
-        public async Task ShouldReturnXmlString()
+
+
+        [Test, Order(2)]
+        public async Task ShouldSuccess_DoBasicQuery()
         {
-            var q = new QueryProperties { Query = @"select * from HodorTest" };
-            var o = new QueryOutputProperties
+            var q = new QueryInput
             {
-                ReturnType = QueryReturnType.Xml,
-                XmlOutput = new XmlOutputProperties
-                {
-                    RootElementName = "items",
-                    RowElementName = "item"
-                }
+                ConnectionString = _connectionString,
+                CommandText = @"select  * from hodortest limit 2"
+
             };
-            var options = new Options { ThrowErrorOnFailure = true };
 
-            Output result = await MySql.Query(q, o, _conn, options, new CancellationToken());
+            _options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
 
-            Assert.AreEqual(@"<?xml version=""1.0"" encoding=""utf-16""?>
-<items>
-  <item>
-    <NAME>hodor</NAME>
-    <VALUE>123</VALUE>
-  </item>
-  <item>
-    <NAME>jon</NAME>
-    <VALUE>321</VALUE>
-  </item>
-</items>", result.Result);
-        }
+            var result = await MySqlTasks.ExecuteQuery(q, _options, new CancellationToken());
 
-        [Test]
-        [Category("Xml tests")]
-        public async Task ShouldWriteXmlFile()
-        {
-            var q = new QueryProperties { Query = @"select name as ""name"", value as ""value"" from HodorTest" };
-            var o = new QueryOutputProperties
-            {
-                ReturnType = QueryReturnType.Xml,
-                XmlOutput = new XmlOutputProperties
-                {
-                    RootElementName = "items",
-                    RowElementName = "item"
-                },
-                OutputToFile = true,
-                OutputFile = new OutputFileProperties
-                {
-                    Path = Path.Combine(Directory.GetCurrentDirectory(), Guid.NewGuid().ToString() + ".xml")
-                }
-            };
-            var options = new Options { ThrowErrorOnFailure = true };
-
-            Output result = await MySql.Query(q, o, _conn, options, new CancellationToken());
-
-            Assert.IsTrue(File.Exists(result.Result), "should have created xml output file");
-            Assert.AreEqual(
-                @"<?xml version=""1.0"" encoding=""utf-8""?>
-<items>
-  <item>
-    <name>hodor</name>
-    <value>123</value>
-  </item>
-  <item>
-    <name>jon</name>
-    <value>321</value>
-  </item>
-</items>",
-                File.ReadAllText(result.Result));
-            File.Delete(result.Result);
-        }
-
-        /// <summary>
-        /// A simple query that fetches a decimal value from the database
-        /// </summary>
-        [Test]
-        [Category("Json tests")]
-        public async Task QueryDatabaseJSON()
-        {
-            var queryProperties = new QueryProperties { Query = "SELECT * FROM DecimalTest" };
-            var outputProperties = new QueryOutputProperties
-            {
-                ReturnType = QueryReturnType.Json,
-                JsonOutput = new JsonOutputProperties()
-            };
-            var options = new Options { ThrowErrorOnFailure = true };
-
-            Output result = await MySql.Query(queryProperties, outputProperties, _conn, options, new CancellationToken());
-
-            Assert.AreNotEqual("", result.Result);
-            Assert.AreEqual(true, result.Success);
-        }
-
-        [Test]
-        [Category("Json tests")]
-        public async Task ShouldReturnJsonString()
-        {
-            var q = new QueryProperties { Query = @"select name as ""name"", value as ""value"" from HodorTest" };
-            var o = new QueryOutputProperties
-            {
-                ReturnType = QueryReturnType.Json,
-                JsonOutput = new JsonOutputProperties(),
-                OutputToFile = false
-            };
-            var options = new Options { ThrowErrorOnFailure = true };
-
-            Output result = await MySql.Query(q, o, _conn, options, new CancellationToken());
-
-            Assert.IsTrue(string.Equals(result.Result, @"[
+            Assert.That(result.ToString(), Is.EqualTo(@"[
   {
     ""name"": ""hodor"",
     ""value"": 123
@@ -186,88 +100,139 @@ namespace Frends.Community.MySql.Tests
     ""value"": 321
   }
 ]"));
+
         }
 
-        [Test]
-        [Category("Json tests")]
-        public async Task ShouldWriteJsonFile()
+        [Test, Order(3)]
+        public void ShouldThrowException_DoBasicQuery()
         {
-            var q = new QueryProperties { Query = @"select name as ""name"", value as ""value"" from HodorTest" };
-            var o = new QueryOutputProperties
+            var q = new QueryInput
             {
-                ReturnType = QueryReturnType.Json,
-                JsonOutput = new JsonOutputProperties(),
-                OutputToFile = true,
-                OutputFile = new OutputFileProperties
-                {
-                    Path = Path.Combine(Directory.GetCurrentDirectory(), Guid.NewGuid().ToString() + ".json")
-                }
+                ConnectionString = _connectionString,
+                CommandText = @"select  * from tablex limit 2"
             };
-            var options = new Options { ThrowErrorOnFailure = true };
 
-            Output result = await MySql.Query(q, o, _conn, options, new CancellationToken());
 
-            Assert.IsTrue(File.Exists(result.Result), "should have created json outputfile");
-            Assert.AreEqual(@"[
+            _options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
+
+            Exception ex = Assert.ThrowsAsync<Exception>(() => MySqlTasks.ExecuteQuery(q, _options, new CancellationToken()));
+            Assert.That(ex != null && ex.Message.StartsWith("Query failed"));
+        }
+
+
+
+        [Test, Order(4)]
+        public async Task ShouldSuccess_CallStoredProcedure()
+        {
+            var q = new QueryInput
+            {
+                ConnectionString = _connectionString,
+                CommandText = @"GetAllFromHodorTest"
+
+            };
+
+            _options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
+
+           var result = await MySqlTasks.ExecuteProcedure(q, _options, new CancellationToken());
+
+           Assert.That(result.ToString().Equals("TODO"));
+        }
+        [Test, Order(5)]
+        public void ShouldThrowException_CallStoredProcedure()
+        {
+            var q = new QueryInput
+            {
+                ConnectionString = _connectionString,
+                CommandText = @"GetAllFromHodorTest00"
+
+            };
+
+            _options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
+
+            Exception ex = Assert.ThrowsAsync<Exception>(() => MySqlTasks.ExecuteQuery(q, _options, new CancellationToken()));
+            Assert.That(ex != null && ex.Message.StartsWith("Query failed"));
+
+        }
+
+
+
+        [Test, Order(6)]
+        public async Task ShouldSuccess_InsertValues()
+        {
+
+            string rndName = Path.GetRandomFileName();
+            Random rnd = new Random();
+            int rndValue = rnd.Next(1000);
+            var q = new QueryInput
+            {
+                ConnectionString = _connectionString,
+                CommandText = "insert into HodorTest (name, value) values ( " + rndName.AddDoubleQuote() + " , " + rndValue + " );"
+
+            };
+            _options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
+
+            var result = await MySqlTasks.ExecuteQuery(q, _options, new CancellationToken());
+
+            Assert.That(result.ToString().Equals("1"));
+
+        }
+
+
+        [Test, Order(7)]
+        public async Task ShouldSuccess_DoBasicQueryOneValue()
+        {
+            var q = new QueryInput
+            {
+                ConnectionString = _connectionString,
+                CommandText = "SELECT value FROM HodorTest WHERE name LIKE 'hodor' limit 1 "
+
+
+            };
+
+            _options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
+
+            var result = await MySqlTasks.ExecuteQuery(q, _options, new CancellationToken());
+
+            Assert.That(result.ToString(), Is.EqualTo(@"[
   {
-    ""name"": ""hodor"",
     ""value"": 123
-  },
-  {
-    ""name"": ""jon"",
-    ""value"": 321
   }
-]",
-                File.ReadAllText(result.Result));
-            File.Delete(result.Result);
+]"));
+
         }
 
-        [Test]
-        [Category("Csv tests")]
-        public async Task ShouldReturnCsvString()
+        [Test, Order(8)]
+        public void ShouldThrowException_FaultyConnectionString()
         {
-            var q = new QueryProperties { Query = @"select name as ""name"", value as ""value"" from HodorTest" };
-            var o = new QueryOutputProperties
+            var q = new QueryInput
             {
-                ReturnType = QueryReturnType.Csv,
-                CsvOutput = new CsvOutputProperties
-                {
-                    CsvSeparator = ";",
-                    IncludeHeaders = true
-                }
+                ConnectionString = _connectionString + "nonsense",
+                CommandText = "SELECT value FROM HodorTest WHERE name LIKE 'hodor' limit 1 "
+
             };
-            var options = new Options { ThrowErrorOnFailure = true };
 
-            Output result = await MySql.Query(q, o, _conn, options, new CancellationToken());
+            _options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
 
-            StringAssert.IsMatch(result.Result, "name;value\r\nhodor;123\r\njon;321\r\n");
+            Exception ex = Assert.ThrowsAsync<Exception>(() => MySqlTasks.ExecuteQuery(q, _options, new CancellationToken()));
+            Assert.That(ex != null && ex.Message.StartsWith("Format of the initialization string"));
+
         }
-
-        [Test]
-        [Category("Csv tests")]
-        public async Task ShouldWriteCsvFile()
+        [Test, Order(9)]
+        public void ShouldThrowException_CancellationRequested()
         {
-            var q = new QueryProperties { Query = "select * from HodorTest" };
-            var o = new QueryOutputProperties
+            var q = new QueryInput
             {
-                ReturnType = QueryReturnType.Csv,
-                CsvOutput = new CsvOutputProperties
-                {
-                    CsvSeparator = ";",
-                    IncludeHeaders = true
-                },
-                OutputToFile = true,
-                OutputFile = new OutputFileProperties
-                {
-                    Path = Path.Combine(Directory.GetCurrentDirectory(), Guid.NewGuid().ToString() + ".csv")
-                }
+                ConnectionString = _connectionString + "nonsense",
+                CommandText = "SELECT value FROM HodorTest WHERE name LIKE 'hodor' limit 1 "
+
             };
-            var options = new Options { ThrowErrorOnFailure = true };
 
-            Output result = await MySql.Query(q, o, _conn, options, new CancellationToken());
+            _options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;
 
-            Assert.IsTrue(File.Exists(result.Result), "should have created csv output file");
-            File.Delete(result.Result);
+            Exception ex = Assert.ThrowsAsync<TaskCanceledException>(() => MySqlTasks.ExecuteQuery(q, _options, new CancellationToken(true)));
+            Assert.That(ex != null && ex.Message.StartsWith("A task was canceled"));
+
         }
+
     }
 }
