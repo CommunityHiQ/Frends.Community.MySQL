@@ -6,11 +6,11 @@
 		<copyright>HiQ Finland</copyright>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageProjectUrl>https://github.com/CommunityHiQ/Frends.Community.MySql</PackageProjectUrl>
-		<Description>Task for performing MySql queries</Description>
+		<Description>Task for performing MySql queries.</Description>
 		<IncludeSource>true</IncludeSource>
 		<PackageTags>Frends</PackageTags>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<Version>2.0.5</Version>
+		<Version>2.1.0</Version>
 
 	</PropertyGroup>
 
