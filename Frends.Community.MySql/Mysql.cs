@@ -14,14 +14,14 @@ using Newtonsoft.Json.Linq;
 namespace Frends.Community.MySql
 {
     /// <summary>
-    /// Example task package for handling files
+    /// Tasks for performing MySql queries.
     /// </summary>
     public static class MySqlTasks
     {
 
 
         /// <summary>
-        /// Task for performing queries in Oracle databases. See documentation at https://github.com/CommunityHiQ/Frends.Community.Oracle.Query
+        ///  Execute a sql query. See documentation at https://github.com/CommunityHiQ/Frends.Community.MySQL#executequery
         /// </summary>
         /// <param name="query"></param>
         /// <param name="options"></param>
@@ -38,7 +38,7 @@ namespace Frends.Community.MySql
         }
 
         /// <summary>
-        /// Task for performing queries in Oracle databases. See documentation at https://github.com/CommunityHiQ/Frends.Community.Oracle.Query
+        /// Execute a stored procedure. See documentation at https://github.com/CommunityHiQ/Frends.Community.MySQL#ExecuteProcedure
         /// </summary>
         /// <param name="query"></param>
         /// <param name="options"></param>
@@ -56,7 +56,7 @@ namespace Frends.Community.MySql
 
         [SuppressMessage("Security",
             "CA2100:Review SQL queries for security vulnerabilities", Justification =
-                "One is able to write quereis in FRENDS. It is up to a FRENDS process prevent injections.")]
+                "One is able to write queries in FRENDS. It is up to a FRENDS process prevent injections.")]
         private static async Task<JToken> GetMySqlCommandResult(
             string query, string connectionString, IEnumerable<Parameter> parameters,
             Options options,
