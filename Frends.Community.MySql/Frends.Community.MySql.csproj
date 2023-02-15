@@ -32,10 +32,4 @@
 		<PackageReference Include="System.Xml.XmlDocument" Version="4.3.0" />
 	</ItemGroup>
 
-	<ProjectExtensions>
-		<VisualStudio>
-			<UserProperties frendstaskmetadata_1json__JsonSchema="http://json.schemastore.org/azure-iot-edge-deployment-template-2.0" />
-		</VisualStudio>
-	</ProjectExtensions>
-
 </Project>
