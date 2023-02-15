@@ -66,7 +66,7 @@ namespace Frends.Community.MySql
     {
 
         /// <summary>
-        /// Timeout value in seconds
+        /// Timeout value in seconds.
         /// </summary>
         [DefaultValue(30)]
         public int TimeoutSeconds { get; set; }
