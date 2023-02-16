@@ -2,7 +2,6 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Extensions;
 using MySql.Data.MySqlClient;
 using NUnit.Framework;
 
@@ -166,7 +165,7 @@ namespace Frends.Community.MySql.Tests
             var q = new QueryInput
             {
                 ConnectionString = _connectionString,
-                CommandText = "insert into HodorTest (name, value) values ( " + rndName.AddDoubleQuote() + " , " + rndValue + " );"
+                CommandText = $"insert into HodorTest (name, value) values ( \"{rndName}\" , {rndValue});"
 
             };
             _options.MySqlTransactionIsolationLevel = MySqlTransactionIsolationLevel.Default;

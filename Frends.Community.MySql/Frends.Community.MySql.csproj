@@ -10,7 +10,7 @@
 		<IncludeSource>true</IncludeSource>
 		<PackageTags>Frends</PackageTags>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<Version>2.1.0</Version>
+		<Version>2.1.1</Version>
 
 	</PropertyGroup>
 
@@ -23,7 +23,7 @@
 	<ItemGroup>
 		<PackageReference Include="Dapper" Version="2.0.78" />
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-		<PackageReference Include="MySql.Data" Version="8.0.23" />
+		<PackageReference Include="MySql.Data" Version="8.0.32" />
 		<PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
 		<PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
 		<PackageReference Include="System.Data.Common" Version="4.3.0" />
@@ -31,11 +31,5 @@
 		<PackageReference Include="System.Threading.Tasks" Version="4.3.0" />
 		<PackageReference Include="System.Xml.XmlDocument" Version="4.3.0" />
 	</ItemGroup>
-
-	<ProjectExtensions>
-		<VisualStudio>
-			<UserProperties frendstaskmetadata_1json__JsonSchema="http://json.schemastore.org/azure-iot-edge-deployment-template-2.0" />
-		</VisualStudio>
-	</ProjectExtensions>
 
 </Project>

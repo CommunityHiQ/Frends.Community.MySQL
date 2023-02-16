@@ -100,4 +100,5 @@ NOTE: Be sure to merge the latest from "upstream" before making a pull request!
 | ----- | ----- |
 | 1.0.7 | Initial version of MySql Query Task |
 | 2.0.0 | Task parameters are completely chnaged, so manual work is needed when updating to this version. Tasks are now based on dapper.|
+| 2.1.1 | MySql.Data library updated from 8.0.23 to 8.0.32. |
 
